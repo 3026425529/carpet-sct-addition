@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "carpet-sct-addition",
+  "version": "${version}",
+  "name": "CarpetSCTAddition",
+  "description": "Carpet extension mod",
+  "authors": ["late-maple"],
+  "contact": {
+    "homepage": "https://github.com/3026425529/carpet-sct-addition",
+    "sources": "https://github.com/3026425529/carpet-sct-addition"
+  },
+  "environment": "*",
+  "entrypoints": {
+    "main": ["top.sctserver.sct.CarpetSCTAddition"]
+  },
+  "mixins": ["carpet-sct-addition.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "26.3",
+    "carpet": ">=26.3"
+  },
+  "license": "LGPL"
+}
