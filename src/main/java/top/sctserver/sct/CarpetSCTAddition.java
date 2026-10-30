@@ -7,8 +7,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.server.command.ServerCommandSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.sctserver.sct.commands.MigrateScoresCommand;
@@ -31,7 +31,7 @@ public class CarpetSCTAddition implements CarpetExtension, ModInitializer {
     }
 
     @Override
-    public void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
+    public void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess context) {
         MigrateScoresCommand.register(dispatcher);
     }
 
