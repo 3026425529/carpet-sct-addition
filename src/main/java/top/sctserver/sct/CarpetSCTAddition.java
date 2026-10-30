@@ -9,14 +9,11 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.ServerCommandSource;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import top.sctserver.sct.commands.MigrateScoresCommand;
 
 import java.util.Map;
 
 public class CarpetSCTAddition implements CarpetExtension, ModInitializer {
-    public static final Logger LOGGER = LogManager.getLogger();
     public static final String MOD_ID = "carpet-sct-addition";
     public static String MOD_VERSION = "26.3";
     public static String MOD_NAME = "CarpetSCTAddition";
