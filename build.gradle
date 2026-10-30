@@ -12,6 +12,7 @@ group = project.maven_group
 
 repositories {
     maven { url = 'https://masa.dy.fi/maven' }
+    maven { url = 'https://api.modrinth.com/maven' }
     exclusiveContent {
         forRepository {
             maven { url = 'https://repo.codemc.io/repository/relativitymc/' }
@@ -28,7 +29,7 @@ dependencies {
     if (localCarpet.exists()) {
         modCompileOnly files(localCarpet)
     } else {
-        modCompileOnly "carpet:fabric-carpet:${project.carpet_version}"
+        modCompileOnly "maven.modrinth:TQTTVgYE:yt9oDFOj"
     }
 }
 
