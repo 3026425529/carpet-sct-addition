@@ -36,7 +36,7 @@ public abstract class ServerRecipeBookMixin {
         RecipeBookOptions settings = ((ServerRecipeBook) (Object) this).getOptions();
         player.networkHandler.sendPacket(new RecipeBookSettingsS2CPacket(settings));
 
-        ServerRecipeManager recipeManager = player.server.getRecipeManager();
+        ServerRecipeManager recipeManager = player.getServerWorld().getServer().getRecipeManager();
         Collection<RecipeEntry<?>> allRecipes = recipeManager.getAllRecipes();
         List<RecipeBookAddS2CPacket.Entry> entries = new ArrayList<>(allRecipes.size());
         for (RecipeEntry<?> recipe : allRecipes) {
