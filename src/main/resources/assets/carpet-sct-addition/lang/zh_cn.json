@@ -1,0 +1,6 @@
+{
+  "carpet.rule.migrateScores.desc": "玩家改名后进入游戏会迁移其计分",
+  "carpet.rule.migrateScoresCommand.desc": "计分迁移命令",
+  "carpet.rule.sendAllRecipes.desc": "向客户端发送所有配方",
+  "sct.command.migratescorescommand.success": "已成功将玩家 %s 的分数迁移到玩家 %s"
+}
