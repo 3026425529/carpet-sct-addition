@@ -1,13 +1,13 @@
 package top.sctserver.sct.utils;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.scoreboard.ReadableScoreboardScore;
+import net.minecraft.scoreboard.ScoreAccess;
+import net.minecraft.scoreboard.ScoreHolder;
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.ScoreboardObjective;
+import net.minecraft.scoreboard.ScoreboardScore;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.scores.Objective;
-import net.minecraft.world.scores.ReadOnlyScoreInfo;
-import net.minecraft.world.scores.ScoreAccess;
-import net.minecraft.world.scores.Score;
-import net.minecraft.world.scores.ScoreHolder;
-import net.minecraft.world.scores.Scoreboard;
 
 public final class MigrateScoresUtil {
     private MigrateScoresUtil() {
@@ -15,20 +15,20 @@ public final class MigrateScoresUtil {
 
     public static void migrateScores(MinecraftServer server, String source, String target) {
         Scoreboard scoreboard = server.getScoreboard();
-        ScoreHolder sourceHolder = ScoreHolder.forNameOnly(source);
-        ScoreHolder targetHolder = ScoreHolder.forNameOnly(target);
+        ScoreHolder sourceHolder = ScoreHolder.fromName(source);
+        ScoreHolder targetHolder = ScoreHolder.fromName(target);
 
-        Object2IntMap<Objective> scores = scoreboard.listPlayerScores(sourceHolder);
+        Object2IntMap<ScoreboardObjective> scores = scoreboard.getScoreHolderObjectives(sourceHolder);
         scores.forEach((objective, value) -> {
-            ReadOnlyScoreInfo oldScore = scoreboard.getPlayerScoreInfo(sourceHolder, objective);
-            ScoreAccess targetScore = scoreboard.getOrCreatePlayerScore(targetHolder, objective, true);
-            if (oldScore instanceof Score oldScoreValue) {
-                targetScore.display(oldScoreValue.display());
-                targetScore.numberFormatOverride(oldScore.numberFormat());
+            ReadableScoreboardScore oldScore = scoreboard.getScore(sourceHolder, objective);
+            ScoreAccess targetScore = scoreboard.getOrCreateScore(targetHolder, objective, true);
+            if (oldScore instanceof ScoreboardScore oldScoreValue) {
+                targetScore.setDisplayText(oldScoreValue.getDisplayText());
             }
-            targetScore.set(value);
+            targetScore.setNumberFormat(oldScore.getNumberFormat());
+            targetScore.setScore(value);
         });
 
-        scoreboard.resetAllPlayerScores(sourceHolder);
+        scoreboard.removeScores(sourceHolder);
     }
 }
