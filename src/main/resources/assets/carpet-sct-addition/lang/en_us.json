@@ -1,0 +1,6 @@
+{
+  "carpet.rule.migrateScores.desc": "Migrates a player's scores upon changing their name.",
+  "carpet.rule.migrateScoresCommand.desc": "Score migration command.",
+  "carpet.rule.sendAllRecipes.desc": "Send all recipes",
+  "sct.command.migratescorescommand.success": "Successfully transferred player %s's score to %s"
+}
