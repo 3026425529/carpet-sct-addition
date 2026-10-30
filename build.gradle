@@ -12,11 +12,17 @@ group = project.maven_group
 
 repositories {
     maven { url = 'https://masa.dy.fi/maven' }
+    exclusiveContent {
+        forRepository {
+            maven { url = 'https://repo.codemc.io/repository/relativitymc/' }
+        }
+        filter { includeGroup 'org.relativitymc' }
+    }
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
+    mappings "org.relativitymc:modern-yarn:${project.modern_yarn_version}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     def localCarpet = file("${rootDir}/../fabric-carpet-26.3+v260915.jar")
     if (localCarpet.exists()) {
@@ -28,6 +34,8 @@ dependencies {
 
 loom {
     runtimeOnlyLog4j = true
+    useIntermediateMappings = true
+    intermediaryUrl = 'https://repo.codemc.io/repository/relativitymc/org/relativitymc/intermediary/%1$s/intermediary-%1$s-v2.jar'
 }
 
 processResources {
