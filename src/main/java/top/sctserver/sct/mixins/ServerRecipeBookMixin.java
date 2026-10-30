@@ -1,14 +1,14 @@
 package top.sctserver.sct.mixins;
 
-import net.minecraft.network.protocol.game.ClientboundRecipeBookAddPacket;
-import net.minecraft.network.protocol.game.ClientboundRecipeBookSettingsPacket;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.stats.RecipeBookSettings;
-import net.minecraft.stats.ServerRecipeBook;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.network.packet.s2c.play.RecipeBookAddS2CPacket;
+import net.minecraft.network.packet.s2c.play.RecipeBookSettingsS2CPacket;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.ServerRecipeManager;
+import net.minecraft.recipe.book.RecipeBookOptions;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.network.ServerRecipeBook;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,30 +24,30 @@ import java.util.Set;
 
 @Mixin(ServerRecipeBook.class)
 public abstract class ServerRecipeBookMixin {
-    @Shadow @Final private ServerRecipeBook.DisplayResolver displayResolver;
-    @Shadow @Final protected Set<ResourceKey<Recipe<?>>> known;
+    @Shadow @Final private ServerRecipeBook.DisplayCollector collector;
+    @Shadow @Final protected Set<RegistryKey<Recipe<?>>> highlighted;
 
-    @Inject(method = "sendInitialRecipeBook(Lnet/minecraft/server/level/ServerPlayer;)V", at = @At("HEAD"), cancellable = true)
-    private void carpetsctaddition$sendAllRecipes(ServerPlayer player, CallbackInfo ci) {
+    @Inject(method = "sendInitRecipesPacket(Lnet/minecraft/server/network/ServerPlayerEntity;)V", at = @At("HEAD"), cancellable = true)
+    private void carpetsctaddition$sendAllRecipes(ServerPlayerEntity player, CallbackInfo ci) {
         if (!SCTSettings.sendAllRecipes) {
             return;
         }
 
-        RecipeBookSettings settings = ((ServerRecipeBook) (Object) this).getBookSettings();
-        player.connection.send(new ClientboundRecipeBookSettingsPacket(settings));
+        RecipeBookOptions settings = ((ServerRecipeBook) (Object) this).getOptions();
+        player.networkHandler.sendPacket(new RecipeBookSettingsS2CPacket(settings));
 
-        RecipeManager recipeManager = player.level().getServer().getRecipeManager();
-        Collection<RecipeHolder<?>> allRecipes = recipeManager.getRecipes();
-        List<ClientboundRecipeBookAddPacket.Entry> entries = new ArrayList<>(allRecipes.size());
-        for (RecipeHolder<?> recipe : allRecipes) {
-            ResourceKey<Recipe<?>> recipeKey = recipe.id();
-            displayResolver.displaysForRecipe(recipeKey, entry -> {
-                boolean shouldHighlight = known.contains(recipeKey);
-                entries.add(new ClientboundRecipeBookAddPacket.Entry(entry, false, shouldHighlight));
+        ServerRecipeManager recipeManager = player.getServer().getRecipeManager();
+        Collection<RecipeEntry<?>> allRecipes = recipeManager.getAllRecipes();
+        List<RecipeBookAddS2CPacket.Entry> entries = new ArrayList<>(allRecipes.size());
+        for (RecipeEntry<?> recipe : allRecipes) {
+            RegistryKey<Recipe<?>> recipeKey = recipe.id();
+            collector.displaysForRecipe(recipeKey, entry -> {
+                boolean shouldHighlight = highlighted.contains(recipeKey);
+                entries.add(new RecipeBookAddS2CPacket.Entry(entry, false, shouldHighlight));
             });
         }
 
-        player.connection.send(new ClientboundRecipeBookAddPacket(entries, true));
+        player.networkHandler.sendPacket(new RecipeBookAddS2CPacket(entries, true));
         ci.cancel();
     }
 }
